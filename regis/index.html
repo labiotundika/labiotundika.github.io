@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Anggota Baru - Lab Riset IoT</title>
+    <!-- 1. Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Memuat font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 3. Konfigurasi font untuk Tailwind dan Dark Mode -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Dukungan Dark Mode Dasar */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #111827; /* gray-900 */
+                color: #f3f4f6; /* gray-100 */
+            }
+            .form-card {
+                background-color: #1f2937; /* gray-800 */
+            }
+            .form-input {
+                background-color: #374151; /* gray-700 */
+                border-color: #4b5563; /* gray-600 */
+                color: #f3f4f6; /* gray-100 */
+            }
+            .form-input::placeholder {
+                color: #9ca3af; /* gray-400 */
+            }
+            .form-label {
+                color: #d1d5db; /* gray-300 */
+            }
+        }
+        
+        /* Animasi untuk spinner loading */
+        .loader {
+            border-top-color: #3b82f6; /* blue-500 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+
+    <div class="container mx-auto px-4 py-12 min-h-screen flex items-center justify-center">
+        
+        <div class="w-full max-w-lg bg-white dark:bg-gray-800 p-8 md:p-10 rounded-xl shadow-2xl form-card">
+            
+            <!-- Header Formulir -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Pendaftaran Anggota Baru</h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 mt-2">Lab Riset IoT</p>
+            </div>
+            
+            <!--  -->
+
+            <!-- Formulir Pendaftaran -->
+            <form id="registrationForm" class="space-y-6">
+                
+                <!-- Field: Nama Lengkap -->
+                <div>
+                    <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300 form-label mb-2">Nama Lengkap</label>
+                    <input type="text" id="nama" name="nama"
+                           placeholder="Masukkan nama lengkap Anda"
+                           required
+                           class="form-input w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+                
+                <!-- Field: NIM / NIK -->
+                <div>
+                    <label for="id_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300 form-label mb-2">NIM / NIK</label>
+                    <input type="text" id="id_number" name="id_number"
+                           placeholder="Masukkan NIM (Mahasiswa) atau NIK (Umum)"
+                           required
+                           class="form-input w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+                
+                <!-- Field: Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 form-label mb-2">Email Aktif</label>
+                    <input type="email" id="email" name="email"
+                           placeholder="contoh@email.com"
+                           required
+                           class="form-input w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+                
+                <!-- Field: Nomor HP -->
+                <div>
+                    <label for="hp" class="block text-sm font-medium text-gray-700 dark:text-gray-300 form-label mb-2">Nomor HP (WhatsApp Aktif)</label>
+                    <input type="tel" id="hp" name="hp"
+                           placeholder="08123456xxxx"
+                           required
+                           class="form-input w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+                
+                <!-- Field: Motivasi -->
+                <div>
+                    <label for="motivasi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 form-label mb-2">Motivasi Bergabung</label>
+                    <textarea id="motivasi" name="motivasi" rows="4"
+                              placeholder="Jelaskan tujuan dan motivasi Anda bergabung dengan Lab Riset IoT..."
+                              required
+                              class="form-input w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"></textarea>
+                    
+                    <!-- Tombol Fitur Gemini API -->
+                    <button type="button" id="ai-feedback-btn"
+                            class="mt-3 w-full justify-center inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50">
+                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9c0-.42-.03-.83-.08-1.24"></path><path d="M16.14 6.14a4.34 4.34 0 0 0-6.14 0l.02.02-3.8 3.8a4.34 4.34 0 1 0 6.14 6.14l3.8-3.8-.02-.02a4.34 4.34 0 0 0 0-6.14z"></path><path d="m19 5 1 1"></path><path d="M21.12 1.88a.04.04 0 0 0-.06 0l-.53.53a.04.04 0 0 0 0 .06l.53.53a.04.04 0 0 0 .06 0l.53-.53a.04.04 0 0 0 0-.06l-.53-.53z"></path><path d="m18 2 1 1"></path><path d="M22 6h-1"></path><path d="M22 10h-1"></path><path d="M18 14 17 13"></path><path d="M14 18l-1 1"></path></svg>
+                        ✨ Beri Masukan pada Motivasi Saya
+                    </button>
+                </div>
+
+                <!-- Kontainer untuk Loading dan Hasil AI -->
+                <div class="space-y-3">
+                    <!-- Loading Spinner -->
+                    <div id="loading-spinner" class="hidden flex justify-center items-center mt-4">
+                        <div class="loader w-6 h-6 rounded-full border-4 border-gray-200 dark:border-gray-600"></div>
+                        <span class="ml-3 text-sm text-gray-600 dark:text-gray-400">AI sedang menganalisis motivasi Anda...</span>
+                    </div>
+                    
+                    <!-- AI Feedback Container -->
+                    <div id="ai-feedback-container" class="hidden mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <h4 class="text-sm font-bold text-blue-800 dark:text-blue-200 mb-2">Masukan dari AI:</h4>
+                        <p id="ai-feedback-text" class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></p>
+                    </div>
+                </div>
+
+                <!-- Tombol Submit Utama -->
+                <div>
+                    <button type="submit"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+                        Kirim Pendaftaran
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Pesan Sukses (Tersembunyi) -->
+            <div id="successMessage" class="hidden mt-6 p-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 rounded-lg text-center">
+                <p class="font-medium">Satu Langkah Lagi!</p>
+                <p class="text-sm">Tab WhatsApp baru telah terbuka. Silakan periksa dan tekan "Kirim" (Send) untuk menyelesaikan pendaftaran Anda.</p>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // --- Bagian Asli untuk Submit Form (Dimodifikasi untuk WhatsApp) ---
+        const registrationForm = document.getElementById('registrationForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        registrationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Nomor WA Admin (sesuai permintaan)
+            const adminNumber = "628563076813";
+            
+            // 1. Format pesan untuk WhatsApp
+            // Kita gunakan format yang rapi dengan spasi
+            const message = `
+--- Pendaftaran Baru Lab IoT ---
+
+Nama Lengkap:
+${data.nama}
+
+NIM / NIK:
+${data.id_number}
+
+Email Aktif:
+${data.email}
+
+Nomor HP:
+${data.hp}
+
+Motivasi Bergabung:
+${data.motivasi}
+
+------------------------------------
+            `;
+            
+            // 2. Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(message.trim());
+            
+            // 3. Buat URL WhatsApp "Click-to-Chat"
+            const waUrl = `https://wa.me/${adminNumber}?text=${encodedMessage}`;
+            
+            // 4. Buka URL di tab baru
+            // Ini akan membuka WhatsApp Web di desktop atau aplikasi WhatsApp di mobile
+            window.open(waUrl, '_blank');
+            
+            // 5. Tampilkan pesan sukses (yang sudah dimodifikasi)
+            successMessage.classList.remove('hidden');
+            registrationForm.reset(); // Reset form setelah data diambil
+            
+            // Sembunyikan juga feedback AI jika ada
+            document.getElementById('ai-feedback-container').classList.add('hidden');
+            
+            // Atur agar pesan sukses hilang setelah 10 detik (diberi waktu lebih)
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 10000);
+        });
+
+        // --- Bagian Baru untuk Fitur Gemini API ---
+        
+        // Ambil elemen-elemen baru
+        const aiFeedbackBtn = document.getElementById('ai-feedback-btn');
+        const motivasiTextarea = document.getElementById('motivasi');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const aiFeedbackContainer = document.getElementById('ai-feedback-container');
+        const aiFeedbackText = document.getElementById('ai-feedback-text');
+
+        // Tambahkan event listener ke tombol AI
+        aiFeedbackBtn.addEventListener('click', async () => {
+            const motivationText = motivasiTextarea.value;
+            
+            // Validasi sederhana
+            if (motivationText.trim().length < 20) {
+                aiFeedbackText.innerText = "Mohon tulis motivasi Anda lebih lengkap (minimal 20 karakter) agar AI dapat memberikan masukan yang baik.";
+                aiFeedbackContainer.classList.remove('hidden');
+                return;
+            }
+
+            // Tampilkan UI loading
+            loadingSpinner.classList.remove('hidden');
+            aiFeedbackContainer.classList.add('hidden');
+            aiFeedbackBtn.disabled = true;
+            aiFeedbackBtn.querySelector('span')?.remove(); // Hapus teks jika ada
+            aiFeedbackBtn.insertAdjacentHTML('beforeend', '<span class="ml-2">Memproses...</span>');
+
+            try {
+                // Panggil API
+                const feedback = await callGeminiAPI(motivationText);
+                
+                // Tampilkan hasil
+                aiFeedbackText.innerText = feedback;
+                aiFeedbackContainer.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                // MODIFIKASI: Tampilkan pesan error yang lebih spesifik
+                aiFeedbackText.innerText = `Maaf, terjadi kesalahan: ${error.message}`;
+                aiFeedbackContainer.classList.remove('hidden');
+            } finally {
+                // Kembalikan UI ke normal
+                loadingSpinner.classList.add('hidden');
+                aiFeedbackBtn.disabled = false;
+                aiFeedbackBtn.querySelector('span')?.remove(); // Hapus "Memproses..."
+            }
+        });
+
+        /**
+         * Fungsi untuk memanggil Gemini API
+         * Menggunakan exponential backoff untuk retry
+         */
+        async function callGeminiAPI(motivationText, retryCount = 0) {
+            const MAX_RETRIES = 3;
+            const BACKOFF_FACTOR = 2;
+            
+            // JANGAN UBAH API KEY INI. Biarkan kosong.
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            // Prompt untuk sistem (memberi konteks)
+            const systemPrompt = `Anda adalah asisten AI yang ramah dan suportif untuk Lab Riset IoT (Internet of Things). 
+Tugas Anda adalah memberikan masukan konstruktif singkat (1-2 kalimat) pada motivasi calon anggota. 
+JANGAN menulis ulang motivasi mereka. 
+Setelah masukan, sarankan 2-3 topik riset IoT spesifik yang mungkin relevan dengan minat mereka untuk dibahas saat wawancara.
+Selalu jawab dalam Bahasa Indonesia.
+Format jawaban:
+[Masukan Singkat]
+
+[Saran Topik Riset]
+- Topik 1
+- Topik 2`;
+
+            // Prompt dari pengguna
+            const userQuery = `Tolong tinjau dan beri masukan untuk motivasi saya bergabung dengan Lab IoT: "${motivationText}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    // Jika response error (misal 429 Too Many Requests), coba lagi
+                    if (response.status === 429 && retryCount < MAX_RETRIES) {
+                        const delay = (BACKOFF_FACTOR ** retryCount) * 1000; // 1s, 2s, 4s
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return callGeminiAPI(motivationText, retryCount + 1);
+                    }
+                    throw new Error(`API request failed with status ${response.status}: ${await response.text()}`);
+                }
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                // MODIFIKASI: Pengecekan kandidat yang lebih baik
+                if (candidate) {
+                    // Periksa apakah AI berhenti karena alasan selain "STOP" (misal: SAFETY)
+                    if (candidate.finishReason && candidate.finishReason !== "STOP") {
+                        throw new Error(`Respon AI dihentikan karena: ${candidate.finishReason}. Ini mungkin karena setelan keamanan.`);
+                    }
+                    
+                    // Pastikan ada teks di respons
+                    if (candidate.content?.parts?.[0]?.text) {
+                        return candidate.content.parts[0].text;
+                    }
+                }
+
+                // Jika lolos dari semua pengecekan di atas, berarti respons tidak valid
+                throw new Error("Respon AI tidak valid atau kosong (mungkin diblokir atau tidak ada kandidat).");
+                
+            } catch (error) {
+                // Handle error jaringan atau fetch
+                if (retryCount < MAX_RETRIES) {
+                    const delay = (BACKOFF_FACTOR ** retryCount) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return callGeminiAPI(motivationText, retryCount + 1);
+                }
+                console.error("Gagal mengambil data dari Gemini API:", error);
+                throw error; // Lempar error setelah gagal retry
+            }
+        }
+
+    </script>
+
+</body>
+</html>
